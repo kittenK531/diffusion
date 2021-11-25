@@ -1,12 +1,20 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-V_top = 100
-V_bottom = 0
-V_left = 20
-V_right = 80
 
-iteration = 500
+def V_top(x):
+
+    top = np.zeros(len(x))
+
+    for i in range(len(x)):
+        top[i] = np.sin(2 * np.pi * x[i])
+
+    return top
+
+
+V_bottom, V_left, V_right = 0, 0, 0
+
+iteration = 200
 
 
 class Laplace:
@@ -25,7 +33,7 @@ class Laplace:
         V = np.zeros((len(X), len(Y)))
 
         V[: (len(Y) - 1), :] = V_bottom
-        V[:1, :] = V_top
+        V[:1, :] = V_top(np.arange(self.gridsize) / self.gridsize)
         V[:, :1] = V_left
         V[:, (len(X) - 1) :] = V_right
 
@@ -78,7 +86,7 @@ class Laplace:
 
         plt.colorbar()
         plt.savefig("Electric_Potential_contour.png")
-        plt.show()
+        plt.show(block=False)
 
     def Plot_vf(self, X, Y, Ex, Ey):
         plt.title("Electric Vector Field")
@@ -86,7 +94,7 @@ class Laplace:
         plt.ylabel("y")
         plt.quiver(X, Y, Ex * X, Ey * Y)
         plt.savefig("Electric_field.png")
-        plt.show()
+        plt.show(block=False)
 
     def Normal(self, X, Y):
         path = np.zeros((len(X), len(Y)))
@@ -119,7 +127,7 @@ class Laplace:
 
 
 def main():
-    sheet = Laplace(100, 1, 5, 500)
+    sheet = Laplace(100, 1, 0, 500)
     X, Y = sheet.Meshgrid()
     V = sheet.Dirichlet_BC(X, Y)
     Ex, Ey = sheet.iterative(V, X, Y)
